@@ -1,9 +1,10 @@
+from io import BytesIO
 from types import SimpleNamespace
 
 import httpx
 from openai import RateLimitError
 
-from src import agent, config, vector_store
+from src import agent, config, ingest, vector_store
 from src.config import Settings
 from src.rag import build_retrieval_context
 
@@ -45,6 +46,19 @@ def test_build_retrieval_context_returns_relevant_snippets():
 
     assert "refund" in context.lower()
     assert len(context) > 0
+
+
+def test_load_uploaded_pdf_extracts_text(monkeypatch):
+    class FakePdfReader:
+        def __init__(self, uploaded_file):
+            assert uploaded_file.read() == b"fake pdf bytes"
+            self.pages = [SimpleNamespace(extract_text=lambda: "Uploaded PDF content")]
+
+    monkeypatch.setattr(ingest, "PdfReader", FakePdfReader)
+
+    documents = ingest.load_uploaded_documents([BytesIO(b"fake pdf bytes")])
+
+    assert documents == ["Uploaded PDF content"]
 
 
 def test_answer_question_uses_pinecone_and_openai_when_configured(monkeypatch):

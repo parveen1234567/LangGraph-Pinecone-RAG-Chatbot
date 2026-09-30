@@ -22,6 +22,8 @@ This project provides a lightweight Retrieval-Augmented Generation (RAG) applica
 
 When both API keys are set, the app creates the configured Pinecone index if needed, chunks and embeds the PDFs, retrieves relevant passages, and asks OpenAI to answer from those passages. The defaults create an AWS serverless index in `us-east-1` with 1536 dimensions; configure `PINECONE_CLOUD`, `PINECONE_REGION`, and `EMBEDDING_DIMENSIONS` in `.env` to match your Pinecone setup and embedding model. Live requests send document chunks and questions to those providers and may incur usage charges. Without both keys, the local keyword-search fallback is used; summary and overview prompts get a short extractive summary from the PDF text. Set `RAG_MODE=local` to force local-only mode; after an OpenAI 429 quota error, the app falls back locally and stops retrying cloud calls until restart.
 
+The Streamlit page accepts PDF uploads, so deployed users can add documents in the browser without committing private PDFs to GitHub. Uploaded files remain available for that browser session; upload them again in a new session.
+
 ## Run the API
 
 ```powershell
