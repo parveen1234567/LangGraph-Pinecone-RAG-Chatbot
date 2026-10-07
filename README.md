@@ -53,3 +53,8 @@ curl -X POST http://localhost:8001/ask \
   -H "Content-Type: application/json" \
   -d '{"question": "What is covered in the documents?"}'
 ```
+
+
+##Published link:
+
+https://langgraph-pinecone-rag-chatbot-hgzefbeyqjku4dmodabv27.streamlit.app/
