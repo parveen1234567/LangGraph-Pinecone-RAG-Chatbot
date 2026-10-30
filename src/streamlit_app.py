@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -8,6 +9,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import streamlit as st
+from streamlit.errors import StreamlitSecretNotFoundError
 
 try:
     from .agent import answer_question
@@ -21,6 +23,28 @@ except ImportError:  # pragma: no cover
 
 st.set_page_config(page_title="RAG Agentic AI", page_icon="🤖")
 st.title("RAG Agentic AI")
+
+try:
+    secrets = st.secrets
+except StreamlitSecretNotFoundError:
+    secrets = {}
+
+for key in (
+    "OPENAI_API_KEY",
+    "PINECONE_API_KEY",
+    "PINECONE_INDEX_NAME",
+    "PINECONE_CLOUD",
+    "PINECONE_REGION",
+    "LLM_MODEL",
+    "EMBEDDING_MODEL",
+    "EMBEDDING_DIMENSIONS",
+    "RAG_MODE",
+    "DATA_DIR",
+    "CHUNK_SIZE",
+    "CHUNK_OVERLAP",
+):
+    if key not in os.environ and key in secrets:
+        os.environ[key] = str(secrets[key])
 
 settings = Settings()
 documents = load_documents(settings.data_dir)
